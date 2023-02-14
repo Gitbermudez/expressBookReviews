@@ -35,23 +35,28 @@ const authenticatedUser = (username, password) => {
 //only registered users can login
 regd_users.post("/login", (req, res) => {
   //Write your code here
-  const { username, password } = req.body;
+  //const { username, password } = req.body;
+  const username = req.body.username;
+  const password = req.body.password;
+
   if (!username || !password) {
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
-  if (!authenticatedUser(username, password)) {
-    return res.status(400).json({ message: "Invalid credentials" });
-  }
-  const token = jwt.sign(
-    {
-      username,
-      password,
-    },
-    "secret",
-    { expiresIn: 60 * 60 }
-  );
-  req.session.username = username;
-  return res.status(200).json({ token });
+    return res.status(404).json({message: "Error logging in"});
+}
+
+if (authenticatedUser(username,password)) {
+  let accessToken = jwt.sign({
+    data: password
+ }, 'access', { expiresIn: 60 * 60  });
+//  }, 'access', { expiresIn: 60 });
+
+  req.session.authorization = {
+    accessToken,username
+}
+return res.status(200).send("User successfully logged in");
+} else {
+  return res.status(208).json({message: "Invalid Login. Check username and password"});
+}
+
 });
 
 // Add a book review
