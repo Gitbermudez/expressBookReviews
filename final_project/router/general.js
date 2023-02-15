@@ -40,7 +40,7 @@ public_users.get("/isbn/:isbn",function (req, res) {
 // Get book details based on author
 public_users.get("/author/:author", function (req, res) {
   //Write your code here
-  let booksByAuthor = [];
+ /* let booksByAuthor = [];
   for (let i = 0; i < books.length; i++) {
     if (books[i].author === req.params.author) {
       booksByAuthor.push(books[i]);
@@ -49,14 +49,26 @@ public_users.get("/author/:author", function (req, res) {
   if (!booksByAuthor.length) {
     return res.status(400).json({ message: "Books not found" });
   }
-  return res.status(200).json({ books: booksByAuthor });
+  return res.status(200).json({ books: booksByAuthor });*/
 
+  const author = req.params.author;
+  // res.send(books[author])
+  var filtered_book;
+  let i = 1;
+  while(books[i]){
+      if (books[i]["author"]===author) {
+          filtered_book = books[i];
+          break;
+      }
+      i++;
+  }
+ res.send(filtered_book)
 });
 
 // Get all books based on title
 public_users.get("/title/:title", function (req, res) {
   //Write your code here
-  let booksByTitle = [];
+  /*let booksByTitle = [];
   for (let i = 0; i < books.length; i++) {
     if (books[i].title === req.params.title) {
       booksByTitle.push(books[i]);
@@ -65,8 +77,18 @@ public_users.get("/title/:title", function (req, res) {
   if (!booksByTitle.length) {
     return res.status(400).json({ message: "Books not found" });
   }
-  return res.status(200).json({ books: booksByTitle });
-
+  return res.status(200).json({ books: booksByTitle });*/
+  const title = req.params.title;
+  var filtered_book;
+    let i = 1;
+    while(books[i]){
+        if (books[i]["title"]===title) {
+            filtered_book = books[i];
+            break;
+        }
+        i++;
+    }
+   res.send(filtered_book)
 });
 
 //  Get book review
