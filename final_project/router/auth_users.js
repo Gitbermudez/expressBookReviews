@@ -20,6 +20,10 @@ const authenticatedUser = (username, password) => {
 }
 
 //only registered users can login
+/*{
+    "username":"abc",
+    "password":"1234"
+} */
 regd_users.post("/login", (req, res) => {
   //Write your code here
     if (!req.body.username || !req.body.password) {
