@@ -115,17 +115,15 @@ public_users.get("/title/:title", function (req, res) {
 //  Get book review
 public_users.get("/review/:isbn", function (req, res) {
   //Write your code here
-const isbn = req.params.isbn;
- res.send(books[isbn]["reviews"])
+/*const isbn = req.params.isbn;
+ res.send(books[isbn]["reviews"])*/
 
- /* let isbn = req.params.isbn;
-
+  let isbn = req.params.isbn;
   let book = books.find(book => book.isbn === isbn); 
-  
   if (!book) {
     return res.status(404).json({ message: "Book not found" });
   }
-  return res.status(200).json({ review: book.review });*/
+  return res.status(200).json({ review: book.review });
 });
 
 
