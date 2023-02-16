@@ -15,7 +15,6 @@ const doesExist = (username)=>{
     }
   }
 
-
 public_users.post("/register", (req, res) => {
 //public_users.post("/login", (req, res) => {    
   //Write your code here
@@ -111,19 +110,30 @@ public_users.get("/title/:title", function (req, res) {
     }
    res.send(filtered_book)
 });
-
 //  Get book review
 public_users.get("/review/:isbn", function (req, res) {
   //Write your code here
 /*const isbn = req.params.isbn;
  res.send(books[isbn]["reviews"])*/
-
-  let isbn = req.params.isbn;
+/* const isbn = req.params.isbn;
+ res.send(books[isbn])*/
+   /*let isbn = req.params.isbn;
   let book = books.find(book => book.isbn === isbn); 
-  if (!book) {
+    if (!book) {
     return res.status(404).json({ message: "Book not found" });
   }
-  return res.status(200).json({ review: book.review });
+  return res.status(200).json({ review: book.review });*/
+  const review = req.params.isbn;
+  var filtered_book;
+    let i = 1;
+    while(books[i]){
+        if (books[i]["isbn"]===review) {
+            filtered_book = books[i];
+            break;
+        }
+        i++;
+    }
+   res.send(filtered_book)
 });
 
 
