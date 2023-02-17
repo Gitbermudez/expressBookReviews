@@ -4,14 +4,16 @@ const session = require('express-session')
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
 
-const app = express();
+const app = express()
 
-app.use(express.json());
+app.use(express.json())
 
 let user = []
 
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
+
+//Write the authenication mechanism here
 app.use("/customer/auth/*", function auth(req,res,next){
 	const username = req.body.username;
 	const password = req.body.password;
@@ -34,24 +36,6 @@ app.use("/customer/auth/*", function auth(req,res,next){
 			return res.status(208).json({message: "Invalid Lagin. Check username and password "});
 		}
     });
-//Write the authenication mechanism here
-/* let token = req.session.authorization;
- if(token) {
-     token = token['accessToken'];
-     jwt.verify(token, "access",(err,user)=>{
-         if(!err){
-             req.user = user;
-             next();
-         }
-         else{
-             return res.status(403).json({message: "Customer not authenticated"})
-         }
-      });
-  } else {
-      return res.status(403).json({message: "Customer not logged in"})
-  }
-
-});*/
  
 const PORT =5000;
 

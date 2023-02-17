@@ -239,7 +239,7 @@ public_users.post("/login", (req,res) => {
 
 
 // Get all books – Using async callback function
-function getAllBooks() {
+/*function getAllBooks() {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(books);
@@ -247,10 +247,10 @@ function getAllBooks() {
 
     return;
   });
-}
+}*/
 
 // Search by ISBN – Using Promises
-function getBookByISBN(isbn) {
+/*function getBookByISBN(isbn) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const book = books[isbn];
@@ -260,10 +260,10 @@ function getBookByISBN(isbn) {
       resolve(book);
     }, 2000);
   });
-}
+}*/
 
 // Search by author – Using async callback function
-function getBookByAuthor(author) {
+/*function getBookByAuthor(author) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       const booksByAuthor = [];
@@ -278,10 +278,10 @@ function getBookByAuthor(author) {
       resolve(booksByAuthor);
     }, 2000);
   });
-}
+}*/
 
 // Search by title – Using async callback function
-function getBookByTitle(title) {
+/*function getBookByTitle(title) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       for (const key in books) {
@@ -292,7 +292,7 @@ function getBookByTitle(title) {
       reject("Book not found");
     }, 2000);
   });
-}
+}*/
 
 module.exports.general = public_users;
 module.exports.authenticated = regd_users;
