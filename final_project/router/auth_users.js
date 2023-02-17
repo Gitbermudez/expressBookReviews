@@ -2,50 +2,95 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 let books = require("./booksdb.js");
 const regd_users = express.Router();
-
-let users = [];
+const session = require('express-session')
+const axios = require('axios')
+let users = [
+    {
+        username: 'Douglas',
+        password: 'password',
+    },
+    {
+        username: 'Alberto',
+        password: 'password1',
+    },    
+];
   
 
 const isValid = (username) => {
   //returns boolean
   //write code to check if username is already present in records.
  // return users.some((user) => user.username === username);
- return users[username] !== undefined; 
+ //return users[username] !== undefined; 
+ const validuser = users.filter((user) =>{
+    return (user.username === username)
+});
+if (validuser.length > 0) {
+    return true;
+} else {
+    return false;
+} 
 }
 
-const authenticatedUser = (username, password) => {
+const authenticatedUser = async (username, password) => {
   //returns boolean
   //write code to check if username and password are present in records.
-  return users[username] !== undefined && users[username].password === password;
+ // return users[username] !== undefined && users[username].password === password;
+ const validuser = await users.filter((user) =>{
+    return (user.username === username && user.password === password)
+});
+if (validuser.length > 0) {
+    return true;
+} else {
+    return false;
+}  
 }
 
+const doesExist = async (username)=> {
+	let usernamewithsamename = await users.filter ((user)=>{
+		return user.username === username
+	});
+	if (usernamewithsamename.length > 0) {
+		return true;
+	} else {
+		return false;
+	}	
+}
+
+regd_users.use(
+	session({secret: 'fingerprint_customer', resave : true, saveUninitialized : true})
+ )
+
+
+
 //only registered users can login
-/*{
-    "username":"abc",
-    "password":"1234"
-} */
-regd_users.post("/login", (req, res) => {
+regd_users.post("/login", async (req, res) => {
   //Write your code here
-    if (!req.body.username || !req.body.password) {
-    return res.status(400).json({ message: "Missing required fields" });
+  const username = req.body.username;
+  const password = req.body.password;
+  
+  if (!username || !password) {
+      return res.status(404).json({message: "Error log in!"});
+  }
+  
+  if (authenticatedUser(username, password)){
+      let accessToken = jwt.sign ({
+          data: password
+      }, 'access', {expiresIn: 60 * 60});
+      
+      req.session.authorizition = await {
+          accessToken, username
+      }
+      return res.status(200).send("User successfully logged in");
+  } else {
+      return res.status(208).json({message: "Invalid Login1. Check username and password"});
   }
 
-  if (!isValid(req.body.username)) {
-    return res.status(400).json({ message: "Invalid username" });
-  }
-
-  if (!authenticatedUser(req.body.username, req.body.password)) {
-    return res.status(400).json({ message: "Incorrect password" });
-  }
-
-  const token = jwt.sign({ username: req.body.username }, "secretkey");
-
-  return res.status(200).json({ token }); 
 });
 
 // Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
+regd_users.put("/auth/review/:isbn", async (req, res) => {
   //Write your code here
+  const username = req.session.authorization.username	  
   const isbn = req.params.isbn;
   let filtered_book = books[isbn]
   if (filtered_book) {
@@ -64,17 +109,21 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 
 
 // delete book review
-/*regd_users.delete("/auth/review/:isbn", (req, res) => {
+regd_users.delete("/auth/review/:isbn", async (req, res) => {
  //Write your code here
-
-
-const isbn = req.params.isbn;
-const user = req.session.authorization["username"];
-delete books[isbn]["reviews"][user];
-res.send("delete success!" + books[isbn]["reviews"])
-});*/
+ const isbn = req.params.isbn
+ const username = req.session.authorization.username
+ if (books[isbn]) {
+     let book = await books[isbn]
+     delete book.reviews[username]
+     return res.status(200).send('Review successfully deleted')
+ } else {
+     return res.status(404).json({message: `ISBN ${isbn} not found`})
+ }
+})
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
 module.exports.users = users;
-//module.exports.authenticatedUser = authenticatedUser;
+module.exports.authenticatedUser = authenticatedUser;
+module.exports.doesExist = doesExist;
