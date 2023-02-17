@@ -46,51 +46,33 @@ regd_users.post("/login", (req, res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  /*let isbn = req.params.isbn;
-  let token = req.headers["x-access-token"];
-  try {
-    let decoded = jwt.verify(token, "secretkey");
-    if (books[isbn] === undefined) {
-      return res.status(400).json({ message: "Invalid ISBN" });
-    }
-    books[isbn].reviews = books[isbn].reviews || {};
-    books[isbn].reviews[decoded.username] = req.query.review;
-    return res.status(200).json({ message: "Successfully added review" });
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
-  }*/
-  const isbn = req.params.isbn + "";
-  const review = req.query.review;
-  const username = req.user.data;
-  const book = books[isbn];
-  if (book) {
-      book.reviews[username] = review;
-      return res.status(200).json(book);
+  const isbn = req.params.isbn;
+  let filtered_book = books[isbn]
+  if (filtered_book) {
+      let review = req.query.review;
+      let reviewer = req.session.authorization['username'];
+      if(review) {
+          filtered_book['reviews'][reviewer] = review;
+          books[isbn] = filtered_book;
+      }
+      res.send(`The review for the book with ISBN  ${isbn} has been added/updated.`);
   }
-  return res.status(404).json({ message: "Invalid ISBN" });
-
-
+  else{
+      res.send("Unable to find this ISBN!");
+  }
 });
 
 
 // delete book review
-regd_users.delete("/auth/review/:isbn", (req, res) => {
-  /*Write your code here
-  const { isbn } = req.params;
-  const { username } = req.session;
-  const book = books[isbn];
-  if (!book) {
-    return res.status(404).json({ message: "Book not found" });
-  }
-  book.reviews = book.reviews.filter((review) => review.username !== username);
-  return res.status(200).json({ message: "Review deleted" });
-});*/
+/*regd_users.delete("/auth/review/:isbn", (req, res) => {
+ //Write your code here
+
 
 const isbn = req.params.isbn;
 const user = req.session.authorization["username"];
 delete books[isbn]["reviews"][user];
 res.send("delete success!" + books[isbn]["reviews"])
-});
+});*/
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
