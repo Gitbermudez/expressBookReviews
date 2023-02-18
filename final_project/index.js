@@ -2,6 +2,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const session = require('express-session')
 const customer_routes = require('./router/auth_users.js').authenticated;
+//const authenticatedUser = require('./router/auth_users.js').authenticatedUser;
 const genl_routes = require('./router/general.js').general;
 
 /*let user = []

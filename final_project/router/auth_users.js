@@ -1,30 +1,73 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const session = require('express-session')
 let books = require("./booksdb.js");
 const regd_users = express.Router();
-
+/*const session = require('express-session')
+const routes = require('./router/lndex.js')*/
 let users = [];
-  
+/*    {
+        username: "user1",
+        password: "password1",
+      },
+      {
+        username: "user2",
+        password: "password2",
+      },
+      {
+        username: "user3",
+        password: "password3",
+      },
+    ];*/
 
 const isValid = (username) => {
   //returns boolean
   //write code to check if username is already present in records.
-  for (let i = 0; i < users.length; i++)
+  let userswithsamename = users.filter((user)=>{
+    return user.username === username
+  });
+  if(userswithsamename.length > 0){
+    return true;
+  } else {
+    return false;
+  }
+ }
+
+ /* return users.some((user) => user.username === username);
+}; */
+/* for (let i = 0; i < users.length; i++)
   if (username === users[i].username)
     return false;
 
 return true;
-}
+}*/
+
+/*const doesExist = (username)=>{*/
+   
 
 const authenticatedUser = (username, password) => {
   //returns boolean
   //write code to check if username and password are present in records.
-  for (let i = 0; i < users.length; i++)
+/*  return users.some(
+    (user) => user.username === username && user.password === password
+  );
+};*/
+  let validusers = users.filter((user)=>{
+    return (user.username === username && user.password === password)
+  });
+  if(validusers.length > 0){
+    return true;
+  } else {
+    return false;
+  }
+ }
+ 
+ /* for (let i = 0; i < users.length; i++)
     if (users[i].username === username && users[i].password === password)
       return true;
 
   return false;
-}
+}*/
 
 //only registered users can login
 /*{
@@ -33,12 +76,32 @@ const authenticatedUser = (username, password) => {
 } */
 regd_users.post("/login", (req, res) => {
   //Write your code here
-  const { username, password } = req.body;
+  //const username = req.body.username;
+  const username = req.body.username;
+  const password = req.body.password;
+  if (!username || !password) {
+    return res.status(404).json({message: "Error logging in"});
+}
 
-  if (!(username && password)) {
-    return res.status(404).json({
-      message: "Error logging in"
-    })
+if (authenticatedUser(username,password)) {
+  let accessToken = jwt.sign({
+    data: password
+ }, 'access', { expiresIn: 60 * 60  });
+//  }, 'access', { expiresIn: 60 });
+
+  req.session.authorization = {
+    accessToken,username
+}
+return res.status(200).send("User successfully logged in");
+} else {
+  return res.status(208).json({message: "Invalid Login. Check username and password"});
+}
+
+});
+// const { username, password } = req.body;
+
+/*  if (!(username && password)) {
+    return res.status(404).json({message: "Error logging in"});
   }
 
   if (authenticatedUser(username, password)) {
@@ -52,9 +115,9 @@ regd_users.post("/login", (req, res) => {
 
     return res.status(200).send("User successfully logged in");
   } else {
-    return res.status(208).json({message: "Invalid Login. Check username and password"})
+    return res.status(208).json({message: "Invalid Login. Check username and password"});
   }
-});  
+});*/
 /*if (!req.body.username || !req.body.password) {
     return res.status(400).json({ message: "Missing required fields" });
   }
@@ -71,9 +134,6 @@ regd_users.post("/login", (req, res) => {
 
   return res.status(200).json({ token }); 
 });*/
-
-
-
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
@@ -126,5 +186,6 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   
   module.exports.authenticated = regd_users;
   module.exports.isValid = isValid;
+  //module.exports.doesExit = doesExit;
   module.exports.users = users;
-  //module.exports.authenticatedUser = authenticatedUser;
+  module.exports.authenticatedUser = authenticatedUser;
