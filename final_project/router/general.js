@@ -14,6 +14,7 @@ const doesExist = (username)=>{
       return false;
     }
   }
+
   public_users.post("/register", (req, res) => {
     //public_users.post("/login", (req, res) => {    
       //Write your code here
@@ -40,6 +41,37 @@ const doesExist = (username)=>{
       } 
       return res.status(404).json({message: "Unable to register user."});
     });
+
+
+
+//authentication
+/*regd_users.post("/login", (req, res) => {
+    //Write your code here
+    //const username = req.body.username;
+    const username = req.body.username;
+    const password = req.body.password;
+    if (!username || !password) {
+      return res.status(404).json({message: "Error logging in"});
+  }
+  
+  if (authenticatedUser(username,password)) {
+    let accessToken = jwt.sign({
+      data: password
+   }, 'access', { expiresIn: 60 * 60  });
+  //  }, 'access', { expiresIn: 60 });
+  
+    req.session.authorization = {
+      accessToken,username
+  }
+  return res.status(200).send("User successfully logged in");
+  } else {
+    return res.status(208).json({message: "Invalid Login. Check username and password"});
+  }
+  
+  });*/
+  
+
+
     
     // Get the book list available in the shop
     public_users.get("/", function (req, res) {
@@ -136,7 +168,7 @@ public_users.get("/title/:title", function (req, res) {
   });
   
 // Get all books – Using async callback function
-function getAllBooks() {
+/*function getAllBooks() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(books);
@@ -189,6 +221,6 @@ function getBookByTitle(title) {
         reject("Book not found");
       }, 2000);
     });
-  }
+  }*/
   
   module.exports.general = public_users;  
