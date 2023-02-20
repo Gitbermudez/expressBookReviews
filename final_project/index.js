@@ -36,27 +36,9 @@ app.use(express.json())
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}));
 
 
-//Write the authenication mechanism here
 app.use("/customer/auth/*", function auth(req,res,next){
-/*	const username = req.body.username;
-	const password = req.body.password;
-	if (!username || !password) {
-		return res.status(404).json({message: "Error logging in"});
-	}
-	if (authenticatedUser (username, password)) {
-		let accessToken = jwt.sign({
-			data: password
-		}, 'access', {expiresIn: 60 * 60});
-		
-		req.session.autorization = {
-			accessToken, username
-		}
-	return res.status(200).send("User success login");
-		} else
-		{
-			return res.status(208).json({message: "Invalid Lagin. Check username and password "});
-		}
-    });*/
+//Write the authenication mechanism here
+
     if (req.session.authorization) {
         token = req.session.authorization['accessToken'];
         jwt.verify(token, "access", (err, user) => {

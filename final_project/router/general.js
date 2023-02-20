@@ -18,59 +18,19 @@ const doesExist = (username)=>{
   public_users.post("/register", (req, res) => {
     //public_users.post("/login", (req, res) => {    
       //Write your code here
-    /*  if (!req.body.username || !req.body.password) {
-        return res.status(400).json({ message: "Missing required fields" });
-      }
-      if (users[req.body.username]) {
-        return res.status(400).json({ message: "Username already exists" });
-      }
-      users[req.body.username] = {
-        password: req.body.password,
-      };
-      return res.status(200).json({ message: "Successfully registered" });*/
-      const username = req.body.username;
+       const username = req.body.username;
       const password = req.body.password;
     
       if (username && password) {
         if (!doesExist(username)) { 
           users.push({"username":username,"password":password});
-          return res.status(200).json({message: "User successfully registred. Now you can login"});
+          return res.status(200).json({message: "User" +username+ "successfully registred. Now you can login"});
         } else {
-          return res.status(404).json({message: "User already exists!"});    
+          return res.status(404).json({message: "User" +username+ " already exists!"});    
         }
       } 
       return res.status(404).json({message: "Unable to register user."});
     });
-
-
-
-//authentication
-/*regd_users.post("/login", (req, res) => {
-    //Write your code here
-    //const username = req.body.username;
-    const username = req.body.username;
-    const password = req.body.password;
-    if (!username || !password) {
-      return res.status(404).json({message: "Error logging in"});
-  }
-  
-  if (authenticatedUser(username,password)) {
-    let accessToken = jwt.sign({
-      data: password
-   }, 'access', { expiresIn: 60 * 60  });
-  //  }, 'access', { expiresIn: 60 });
-  
-    req.session.authorization = {
-      accessToken,username
-  }
-  return res.status(200).send("User successfully logged in");
-  } else {
-    return res.status(208).json({message: "Invalid Login. Check username and password"});
-  }
-  
-  });*/
-  
-
 
     
     // Get the book list available in the shop
@@ -91,18 +51,7 @@ public_users.get("/isbn/:isbn",function (req, res) {
   // Get book details based on author
   public_users.get("/author/:author", function (req, res) {
     //Write your code here
-   /* let booksByAuthor = [];
-    for (let i = 0; i < books.length; i++) {
-      if (books[i].author === req.params.author) {
-        booksByAuthor.push(books[i]);
-      }
-    }
-    if (!booksByAuthor.length) {
-      return res.status(400).json({ message: "Books not found" });
-    }
-    return res.status(200).json({ books: booksByAuthor });*/
-  
-    const author = req.params.author;
+   /*  const author = req.params.author;
     // res.send(books[author])
     var filtered_book;
     let i = 1;
@@ -114,47 +63,28 @@ public_users.get("/isbn/:isbn",function (req, res) {
         i++;
     }
    res.send(filtered_book)
-  });
+  });*/
+
+  let ans = []
+    for(const [key, values] of Object.entries(books)){
+        const book = Object.entries(values);
+        for(let i = 0; i < book.length ; i++){
+            if(book[i][0] == 'author' && book[i][1] == req.params.author){
+                ans.push(books[key]);
+            }
+        }
+    }
+    if(ans.length == 0){
+        return res.status(300).json({message: "Author not found"});
+    }
+    res.send(ans);
+});
+
   
 // Get all books based on title
 public_users.get("/title/:title", function (req, res) {
     //Write your code here
-    /*let booksByTitle = [];
-    for (let i = 0; i < books.length; i++) {
-      if (books[i].title === req.params.title) {
-        booksByTitle.push(books[i]);
-      }
-    }
-    if (!booksByTitle.length) {
-      return res.status(400).json({ message: "Books not found" });
-    }
-    return res.status(200).json({ books: booksByTitle });*/
-    const title = req.params.title;
-    var filtered_book;
-      let i = 1;
-      while(books[i]){
-          if (books[i]["title"]===title) {
-              filtered_book = books[i];
-              break;
-          }
-          i++;
-      }
-     res.send(filtered_book)
-  });
-  //  Get book review
-  public_users.get("/review/:isbn", function (req, res) {
-    //Write your code here
-  /*const isbn = req.params.isbn;
-   res.send(books[isbn]["reviews"])*/
-  /* const isbn = req.params.isbn;
-   res.send(books[isbn])*/
-     /*let isbn = req.params.isbn;
-    let book = books.find(book => book.isbn === isbn); 
-      if (!book) {
-      return res.status(404).json({ message: "Book not found" });
-    }
-    return res.status(200).json({ review: book.review });*/
-    const review = req.params.isbn;
+ /*   const review = req.params.isbn;
     var filtered_book;
       let i = 1;
       while(books[i]){
@@ -165,7 +95,37 @@ public_users.get("/title/:title", function (req, res) {
           i++;
       }
      res.send(filtered_book)
-  });
+  });*/
+  let ans = []
+  for(const [key, values] of Object.entries(books)){
+      const book = Object.entries(values);
+      for(let i = 0; i < book.length ; i++){
+          if(book[i][0] == 'title' && book[i][1] == req.params.title){
+              ans.push(books[key]);
+          }
+      }
+  }
+  if(ans.length == 0){
+      return res.status(300).json({message: "Title not found"});
+  }
+  res.send(ans);
+});
+
+//  Get book review
+    public_users.get('/review/:isbn',function (req, res) {
+    //Write your code here
+    const ISBN = req.params.isbn;
+    res.send(books[ISBN].reviews)
+    });
+  
+  // Task 10 
+  // Add the code for getting the list of books available in the shop (done in Task 1) using Promise callbacks or async-await with Axios
+  
+  function getBookList(){
+    return new Promise((resolve,reject)=>{
+      resolve(books);
+    })
+    }
   
 // Get all books – Using async callback function
 function getAllBooks() {
