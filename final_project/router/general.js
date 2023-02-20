@@ -168,7 +168,7 @@ public_users.get("/title/:title", function (req, res) {
   });
   
 // Get all books – Using async callback function
-/*function getAllBooks() {
+function getAllBooks() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(books);
@@ -221,6 +221,6 @@ function getBookByTitle(title) {
         reject("Book not found");
       }, 2000);
     });
-  }*/
+  }
   
   module.exports.general = public_users;  

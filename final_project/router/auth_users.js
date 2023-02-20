@@ -62,7 +62,7 @@ else {
 });
 
 // Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
+regd_users.put("/auth/review/:isbn",  function(req, res) {
     //Write your code here
     const isbn = req.params.isbn;
     const review = req.query.review;
